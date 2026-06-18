@@ -6,17 +6,18 @@
   <title>Database Parking Diorama</title>
   <style>
     :root {
-      --bg-top: #e9f6ff;
+      --bg-top: #dff3ff;
       --bg-bottom: #f7fbff;
-      --ink: #16324f;
+      --ink: #132a46;
       --accent: #2f80ed;
       --accent-dark: #1b5fb8;
       --cart: #f6b84b;
       --cart-dark: #9b6318;
-      --db: #6c7a89;
-      --slot: #dce8f5;
+      --db: #697d8f;
+      --slot: #eef6ff;
       --occupied: #ffd37a;
       --shadow: rgba(22, 50, 79, 0.18);
+      --soft-shadow: rgba(47, 128, 237, 0.14);
       font-family: "Inter", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
     }
 
@@ -26,7 +27,10 @@
       margin: 0;
       min-height: 100vh;
       color: var(--ink);
-      background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 68%, #eef5ff 100%);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.95) 0 16%, transparent 28%),
+        radial-gradient(circle at 82% 18%, rgba(184, 227, 255, 0.85) 0 14%, transparent 30%),
+        linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 68%, #eef5ff 100%);
       overflow: hidden;
     }
 
@@ -39,18 +43,44 @@
       padding: clamp(14px, 3vw, 28px);
     }
 
+    .scene::before,
+    .scene::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .scene::before {
+      left: 5%;
+      right: 5%;
+      top: 78px;
+      height: 350px;
+      background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0));
+    }
+
+    .scene::after {
+      left: 14%;
+      right: 14%;
+      bottom: 18px;
+      height: 52px;
+      background: rgba(45, 73, 103, 0.12);
+      filter: blur(18px);
+    }
+
     .title {
       position: relative;
-      z-index: 4;
+      z-index: 8;
       width: fit-content;
-      margin: 0 auto 10px;
-      padding: 8px 16px;
+      margin: 0 auto 16px;
+      padding: 13px 28px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.78);
-      box-shadow: 0 10px 30px var(--shadow);
-      font-size: clamp(14px, 2.2vw, 18px);
-      font-weight: 800;
-      letter-spacing: 0.04em;
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 18px 44px var(--soft-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      font-size: clamp(18px, 3vw, 34px);
+      font-weight: 900;
+      letter-spacing: 0.03em;
     }
 
     .people-row {
@@ -68,14 +98,27 @@
       height: clamp(96px, 16vw, 132px);
     }
 
+    .person::after {
+      content: "";
+      position: absolute;
+      left: 18%;
+      right: 18%;
+      bottom: 2%;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(22, 50, 79, 0.16);
+      filter: blur(4px);
+      z-index: -1;
+    }
+
     .head {
       width: 34%;
       aspect-ratio: 1;
       margin: 0 auto;
       border-radius: 50%;
-      background: #f3bd8d;
-      border: 2px solid #c87f54;
-      box-shadow: inset -5px -4px 0 rgba(138, 76, 43, 0.15);
+      background: radial-gradient(circle at 32% 25%, #ffd3a6 0 35%, #e8a46f 70%);
+      border: 3px solid #b96f48;
+      box-shadow: inset -5px -4px 0 rgba(138, 76, 43, 0.13), 0 6px 14px rgba(90, 52, 31, 0.16);
     }
 
     .body {
@@ -84,7 +127,8 @@
       margin: -2px auto 0;
       border-radius: 20px 20px 8px 8px;
       background: linear-gradient(135deg, #64d2ff, var(--accent));
-      border: 2px solid var(--accent-dark);
+      border: 3px solid var(--accent-dark);
+      box-shadow: inset -8px -8px 0 rgba(21, 80, 158, 0.14);
     }
 
     .laptop {
@@ -94,18 +138,19 @@
       width: 78%;
       height: 42%;
       transform: translateX(-50%);
-      border-radius: 8px;
-      background: linear-gradient(160deg, #f7fbff, #a7c7e8);
-      border: 3px solid #3c5f81;
-      box-shadow: 0 16px 24px var(--shadow);
+      border-radius: 12px;
+      background: linear-gradient(160deg, #f9fdff, #b8d7ef);
+      border: 4px solid #3b5874;
+      box-shadow: 0 18px 28px var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.86);
     }
 
     .laptop::before {
       content: "";
       position: absolute;
       inset: 12% 16%;
-      border-radius: 5px;
-      background: linear-gradient(180deg, #bde9ff, #ffffff);
+      border-radius: 8px;
+      background: linear-gradient(180deg, #bdefff, #ffffff);
+      box-shadow: 0 0 18px rgba(255, 255, 255, 0.7);
     }
 
     .laptop::after {
@@ -125,8 +170,9 @@
       height: 205px;
       width: 6px;
       border-radius: 999px;
-      background: linear-gradient(180deg, rgba(47,128,237,.12), rgba(47,128,237,.5));
+      background: linear-gradient(180deg, rgba(47,128,237,.08), rgba(47,128,237,.28));
       transform-origin: top center;
+      opacity: 0.55;
       z-index: 1;
     }
 
@@ -144,6 +190,7 @@
       border-radius: 999px;
       background: linear-gradient(180deg, rgba(47,128,237,.56), rgba(27,95,184,.86));
       box-shadow: 0 0 0 8px rgba(47,128,237,.08);
+      opacity: 0.28;
       z-index: 1;
     }
 
@@ -156,8 +203,9 @@
       transform: translate(-50%, -50%);
       border-radius: 50%;
       background: #fff;
-      border: 5px solid var(--accent);
+      border: 5px solid rgba(47, 128, 237, 0.62);
       box-shadow: 0 10px 20px var(--shadow);
+      opacity: 0.5;
       z-index: 2;
     }
 
@@ -168,11 +216,11 @@
       width: 58px;
       height: 34px;
       transform: translateX(-50%);
-      border-radius: 18px 18px 6px 6px;
-      background: linear-gradient(180deg, #2f80ed, #1b5fb8);
-      border: 4px solid #16324f;
-      box-shadow: inset 0 -8px 0 rgba(0,0,0,.18), 0 10px 18px var(--shadow);
-      z-index: 3;
+      border-radius: 20px 20px 8px 8px;
+      background: linear-gradient(180deg, #47a3ff, #1b5fb8);
+      border: 4px solid #173b62;
+      box-shadow: inset 0 -8px 0 rgba(0,0,0,.16), 0 12px 22px rgba(22, 50, 79, 0.24);
+      z-index: 6;
     }
 
     .route-red {
@@ -186,14 +234,14 @@
       position: absolute;
       inset: 0;
       border-radius: 999px;
-      background: linear-gradient(180deg, #ff6c62, #e8352e);
-      box-shadow: 0 0 0 3px rgba(232, 53, 46, 0.08), 0 5px 10px rgba(232, 53, 46, 0.18);
+      background: linear-gradient(180deg, #ff7a70, #ee382f);
+      box-shadow: 0 0 0 3px rgba(232, 53, 46, 0.1), 0 7px 12px rgba(232, 53, 46, 0.2);
     }
 
     .route-left-drop {
       left: 31%;
       top: 238px;
-      width: 8px;
+      width: 9px;
       height: 54px;
       transform: translateX(-50%);
     }
@@ -201,7 +249,7 @@
     .route-mid-drop {
       left: 50%;
       top: 258px;
-      width: 8px;
+      width: 9px;
       height: 324px;
       transform: translateX(-50%);
     }
@@ -209,7 +257,7 @@
     .route-right-drop {
       left: 69%;
       top: 238px;
-      width: 8px;
+      width: 9px;
       height: 54px;
       transform: translateX(-50%);
     }
@@ -218,7 +266,7 @@
       left: 31%;
       top: 286px;
       width: 38%;
-      height: 8px;
+      height: 9px;
     }
 
     .route-left-elbow,
@@ -231,8 +279,8 @@
     .route-left-elbow {
       left: calc(31% - 2px);
       transform: translate(-100%, -100%);
-      border-left: 8px solid #e8352e;
-      border-bottom: 8px solid #e8352e;
+      border-left: 9px solid #ee382f;
+      border-bottom: 9px solid #ee382f;
       border-radius: 0 0 0 30px;
       box-shadow: -3px 4px 8px rgba(232, 53, 46, 0.16);
     }
@@ -240,8 +288,8 @@
     .route-right-elbow {
       left: calc(69% + 2px);
       transform: translateY(-100%);
-      border-right: 8px solid #e8352e;
-      border-bottom: 8px solid #e8352e;
+      border-right: 9px solid #ee382f;
+      border-bottom: 9px solid #ee382f;
       border-radius: 0 0 30px 0;
       box-shadow: 3px 4px 8px rgba(232, 53, 46, 0.16);
     }
@@ -259,6 +307,7 @@
       width: clamp(30px, 5.6vw, 46px);
       height: clamp(26px, 4.8vw, 38px);
       transform: translate(-50%, -50%);
+      filter: drop-shadow(0 8px 10px rgba(22, 50, 79, 0.18));
       animation: flyToSlot 2.55s cubic-bezier(.18,.77,.28,1) forwards;
     }
 
@@ -268,7 +317,7 @@
       clip-path: polygon(8% 0, 92% 0, 80% 100%, 20% 100%);
       background: linear-gradient(180deg, #ffcf70, var(--cart));
       border: 3px solid var(--cart-dark);
-      box-shadow: 0 11px 18px var(--shadow);
+      box-shadow: inset 0 5px 0 rgba(255,255,255,.32);
     }
 
     .cart::before,
@@ -290,35 +339,38 @@
       position: absolute;
       left: 50%;
       bottom: clamp(18px, 4vh, 34px);
-      width: min(78%, 560px);
+      width: min(80%, 600px);
       transform: translateX(-50%);
       z-index: 2;
-      filter: drop-shadow(0 18px 24px var(--shadow));
+      filter: drop-shadow(0 22px 30px rgba(22, 50, 79, 0.22));
     }
 
     .db-cap,
     .db-base {
-      height: 34px;
+      height: 38px;
       border-radius: 50%;
-      background: linear-gradient(180deg, #8fa0b0, var(--db));
-      border: 4px solid #4e5d6c;
+      background: linear-gradient(180deg, #9fafbd, var(--db));
+      border: 5px solid #42556a;
     }
 
     .db-body {
-      margin: -17px 0;
-      padding: 44px clamp(14px, 3vw, 24px) 34px;
-      min-height: 188px;
-      background: linear-gradient(180deg, #7f90a0, #5f6f7f);
-      border-left: 4px solid #4e5d6c;
-      border-right: 4px solid #4e5d6c;
+      margin: -19px 0;
+      padding: 48px clamp(18px, 3.4vw, 32px) 36px;
+      min-height: 204px;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.12), transparent 14% 86%, rgba(0,0,0,.08)),
+        linear-gradient(180deg, #8395a7, #607181);
+      border-left: 5px solid #42556a;
+      border-right: 5px solid #42556a;
     }
 
     .parking-label {
-      margin: -20px auto 18px;
+      margin: -26px auto 18px;
       width: fit-content;
       padding: 6px 14px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.82);
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 8px 18px rgba(22, 50, 79, 0.14);
       font-weight: 900;
       font-size: clamp(13px, 2vw, 16px);
     }
@@ -326,22 +378,37 @@
     .parking-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(34px, 1fr));
-      gap: clamp(8px, 2vw, 14px);
+      gap: clamp(10px, 2vw, 16px);
     }
 
     .slot {
       position: relative;
       min-height: clamp(38px, 6vw, 52px);
-      border: 3px dashed rgba(255,255,255,0.75);
-      border-radius: 12px;
-      background: var(--slot);
+      border: 3px dashed rgba(255,255,255,0.88);
+      border-radius: 14px;
+      background: linear-gradient(180deg, #fff4cf, #ffd575);
+      box-shadow: inset 0 2px 0 rgba(255,255,255,.55), 0 8px 14px rgba(27, 41, 56, 0.08);
       transition: background 280ms ease, border-color 280ms ease, transform 280ms ease;
     }
 
+    .slot::before {
+      content: "";
+      position: absolute;
+      inset: 18% 16%;
+      border: 4px solid rgba(155, 99, 24, 0.72);
+      border-bottom: 0;
+      border-radius: 12px 12px 0 0;
+      opacity: 0.8;
+    }
+
     .slot.occupied {
-      background: var(--occupied);
+      background: linear-gradient(180deg, #ffdf92, var(--occupied));
       border-color: #fff6da;
       transform: scale(0.98);
+    }
+
+    .slot.occupied::before {
+      opacity: 0.25;
     }
 
     .parked-cart {
@@ -373,11 +440,11 @@
       bottom: calc(clamp(18px, 4vh, 34px) + 238px);
       transform: translateX(-50%);
       z-index: 4;
-      width: min(88%, 520px);
-      padding: 10px 16px;
-      border-radius: 16px;
-      background: rgba(255,255,255,0.88);
-      box-shadow: 0 10px 28px var(--shadow);
+      width: min(86%, 560px);
+      padding: 12px 18px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.92);
+      box-shadow: 0 14px 32px rgba(22, 50, 79, 0.16), inset 0 1px 0 rgba(255,255,255,.95);
       text-align: center;
       font-weight: 800;
       font-size: clamp(13px, 2vw, 16px);
