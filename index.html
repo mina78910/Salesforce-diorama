@@ -64,8 +64,8 @@
 
     .person {
       position: relative;
-      width: clamp(82px, 18vw, 142px);
-      height: clamp(132px, 22vw, 190px);
+      width: clamp(58px, 12vw, 94px);
+      height: clamp(96px, 16vw, 132px);
     }
 
     .head {
@@ -119,20 +119,35 @@
       background: #3c5f81;
     }
 
-    .track {
+    .track-network {
       position: absolute;
-      top: 205px;
-      bottom: 210px;
-      width: clamp(58px, 11vw, 96px);
-      border-left: 4px dashed rgba(47, 128, 237, 0.18);
-      border-right: 4px dashed rgba(47, 128, 237, 0.18);
-      transform: translateX(-50%);
+      inset: 164px 0 286px;
       z-index: 1;
+      pointer-events: none;
     }
 
-    .track:nth-of-type(1) { left: 31%; }
-    .track:nth-of-type(2) { left: 50%; }
-    .track:nth-of-type(3) { left: 69%; }
+    .track-network path {
+      fill: none;
+      stroke: rgba(47, 128, 237, 0.28);
+      stroke-width: 7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 10 12;
+    }
+
+    .db-entrance {
+      position: absolute;
+      left: 50%;
+      top: -18px;
+      width: clamp(86px, 16vw, 128px);
+      height: 34px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: linear-gradient(180deg, #455565, #2f3c49);
+      border: 4px solid #4e5d6c;
+      z-index: 3;
+      box-shadow: inset 0 8px 12px rgba(0, 0, 0, 0.22);
+    }
 
     .cart {
       position: absolute;
@@ -250,26 +265,11 @@
     .parked-cart::before { left: 18%; }
     .parked-cart::after { right: 18%; }
 
-    .status {
-      position: absolute;
-      left: 50%;
-      bottom: calc(clamp(18px, 4vh, 34px) + 278px);
-      transform: translateX(-50%);
-      z-index: 4;
-      width: min(88%, 520px);
-      padding: 10px 16px;
-      border-radius: 16px;
-      background: rgba(255,255,255,0.88);
-      box-shadow: 0 10px 28px var(--shadow);
-      text-align: center;
-      font-weight: 800;
-      font-size: clamp(13px, 2vw, 16px);
-    }
-
     @keyframes flyToSlot {
-      0% { top: 190px; left: var(--start-x); opacity: 0; transform: translate(-50%, -50%) scale(.65) rotate(-7deg); }
+      0% { top: 158px; left: var(--start-x); opacity: 0; transform: translate(-50%, -50%) scale(.6) rotate(-7deg); }
       12% { opacity: 1; }
-      60% { top: calc(var(--end-y) - 120px); left: var(--end-x); transform: translate(-50%, -50%) scale(1.04) rotate(5deg); }
+      42% { top: var(--merge-y); left: 50%; transform: translate(-50%, -50%) scale(1) rotate(4deg); }
+      68% { top: var(--entrance-y); left: 50%; transform: translate(-50%, -50%) scale(1.04) rotate(0deg); }
       100% { top: var(--end-y); left: var(--end-x); opacity: 0; transform: translate(-50%, -50%) scale(.74) rotate(0deg); }
     }
 
@@ -277,17 +277,13 @@
       body { overflow-y: hidden; }
       .scene { min-height: 620px; padding: 10px 8px; }
       .people-row { gap: 6px; padding-top: 2px; }
-      .person { width: 31vw; max-width: 112px; height: 142px; }
-      .track { top: 170px; bottom: 178px; width: 44px; }
-      .track:nth-of-type(1) { left: 20%; }
-      .track:nth-of-type(2) { left: 50%; }
-      .track:nth-of-type(3) { left: 80%; }
-      .cart { top: 160px; }
+      .person { width: 25vw; max-width: 84px; height: 110px; }
+      .track-network { inset: 132px 0 276px; }
+      .cart { top: 132px; }
       .database { width: 96%; bottom: 12px; }
       .db-body { min-height: 244px; padding: 38px 12px 38px; }
       .parking-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
       .slot { min-height: 48px; border-radius: 10px; }
-      .status { bottom: 292px; }
     }
   </style>
 </head>
@@ -301,13 +297,15 @@
       <div class="person"><div class="head"></div><div class="body"></div><div class="laptop"></div></div>
     </section>
 
-    <div class="track" aria-hidden="true"></div>
-    <div class="track" aria-hidden="true"></div>
-    <div class="track" aria-hidden="true"></div>
-
-    <p id="status" class="status">3秒ごとにPCからトロッコが出発します</p>
+    <svg class="track-network" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M31 0 C31 18 39 30 50 44" />
+      <path d="M50 0 L50 44" />
+      <path d="M69 0 C69 18 61 30 50 44" />
+      <path d="M50 44 L50 100" />
+    </svg>
 
     <section class="database" aria-label="駐車場に見立てたデータベース">
+      <div class="db-entrance" aria-hidden="true"></div>
       <div class="db-cap"></div>
       <div class="db-body">
         <div class="parking-label">DATABASE PARKING</div>
@@ -320,7 +318,7 @@
   <script>
     const scene = document.querySelector('.scene');
     const grid = document.getElementById('parkingGrid');
-    const status = document.getElementById('status');
+    const entrance = document.querySelector('.db-entrance');
     const totalSlots = 12;
     const desktopStarts = [31, 50, 69];
     const mobileStarts = [20, 50, 80];
@@ -340,27 +338,29 @@
     function launchCart() {
       if (nextSlot >= totalSlots) {
         clearInterval(intervalId);
-        status.textContent = 'データベース駐車場が満車になりました';
         return;
       }
 
       const slot = slots[nextSlot];
       const sceneRect = scene.getBoundingClientRect();
       const slotRect = slot.getBoundingClientRect();
+      const entranceRect = entrance.getBoundingClientRect();
       const starts = window.matchMedia('(max-width: 640px)').matches ? mobileStarts : desktopStarts;
       const startX = starts[launchCount % starts.length];
       const endX = slotRect.left - sceneRect.left + slotRect.width / 2;
       const endY = slotRect.top - sceneRect.top + slotRect.height / 2;
+      const mergeY = sceneRect.height * 0.42;
+      const entranceY = entranceRect.top - sceneRect.top + entranceRect.height / 2;
       const cart = document.createElement('div');
 
       cart.className = 'cart';
       cart.innerHTML = '<div class="cart-body"></div>';
       cart.style.setProperty('--start-x', `${startX}%`);
+      cart.style.setProperty('--merge-y', `${mergeY}px`);
+      cart.style.setProperty('--entrance-y', `${entranceY}px`);
       cart.style.setProperty('--end-x', `${endX}px`);
       cart.style.setProperty('--end-y', `${endY}px`);
       scene.appendChild(cart);
-
-      status.textContent = `トロッコ ${nextSlot + 1} 台目がデータベースへ移動中`;
 
       cart.addEventListener('animationend', () => {
         cart.remove();
@@ -368,9 +368,6 @@
         slot.setAttribute('aria-label', `駐車済み枠 ${nextSlot + 1}`);
         slot.innerHTML = '<div class="parked-cart" aria-hidden="true"></div>';
         nextSlot += 1;
-        status.textContent = nextSlot === totalSlots
-          ? '最後のトロッコが入りました。これ以上は描画しません'
-          : `空き枠 ${totalSlots - nextSlot} / ${totalSlots}`;
       }, { once: true });
 
       launchCount += 1;
