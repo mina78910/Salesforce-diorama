@@ -213,6 +213,7 @@
 
     .db-body {
       position: relative;
+      overflow: hidden;
       margin: -32px 0;
       min-height: 230px;
       padding: 60px clamp(20px, 5vw, 44px) 52px;
@@ -221,10 +222,73 @@
       background: linear-gradient(180deg, #ffffff 0%, #edf8ff 100%);
     }
 
+    .db-liquid {
+      position: absolute;
+      right: 7px;
+      bottom: 0;
+      left: 7px;
+      z-index: 0;
+      height: var(--level, 8%);
+      border-radius: 42% 42% 0 0 / 18px 18px 0 0;
+      background:
+        radial-gradient(circle at 26% 18%, rgba(255,255,255,.58), transparent 22%),
+        linear-gradient(180deg, rgba(55, 198, 217, .74), rgba(47, 128, 237, .62));
+      box-shadow: inset 0 18px 24px rgba(255,255,255,.34), 0 -10px 24px rgba(55,198,217,.22);
+      transition: height .72s cubic-bezier(.18,.77,.28,1);
+    }
+
+    .db-liquid::before {
+      content: "";
+      position: absolute;
+      top: -13px;
+      left: 0;
+      width: 200%;
+      height: 28px;
+      background: radial-gradient(ellipse at center, rgba(255,255,255,.82) 0 18%, rgba(125,240,255,.72) 19% 42%, transparent 43%);
+      background-size: 74px 28px;
+      animation: wave 2.8s linear infinite;
+    }
+
+    .db-liquid.pulse {
+      animation: liquidPulse .74s ease;
+    }
+
+    .db-meter {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      z-index: 3;
+      display: grid;
+      place-items: center;
+      min-width: 86px;
+      padding: 8px 10px;
+      border: 3px solid rgba(20, 32, 51, .14);
+      border-radius: 15px;
+      background: rgba(255,255,255,.86);
+      font-size: 12px;
+      font-weight: 1000;
+    }
+
+    .splash {
+      position: absolute;
+      left: 50%;
+      top: var(--splash-y);
+      z-index: 5;
+      width: 116px;
+      height: 44px;
+      pointer-events: none;
+      transform: translate(-50%, -50%) scale(.7);
+      opacity: 0;
+      border-radius: 50%;
+      border: 4px solid rgba(55,198,217,.88);
+      animation: splash .72s ease-out forwards;
+    }
+
     .db-title {
       position: absolute;
       top: 10px;
       left: 50%;
+      z-index: 3;
       transform: translateX(-50%);
       padding: 7px 15px;
       border-radius: 999px;
@@ -237,6 +301,8 @@
     }
 
     .records {
+      position: relative;
+      z-index: 2;
       display: grid;
       gap: 12px;
     }
@@ -321,6 +387,24 @@
     .event b { font-size: 12px; }
     .event span { color: var(--muted); font-size: 11px; font-weight: 800; }
 
+    .insert-drop {
+      position: absolute;
+      left: var(--drop-x);
+      top: var(--drop-start-y);
+      z-index: 8;
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border: 4px solid var(--line);
+      border-radius: 16px;
+      background: var(--tone);
+      color: #fff;
+      font-weight: 1000;
+      box-shadow: 0 12px 22px var(--shadow);
+      animation: insertIntoDb .82s cubic-bezier(.24,.83,.24,1) forwards;
+    }
+
     .feed {
       position: absolute;
       right: clamp(12px, 3vw, 28px);
@@ -343,7 +427,28 @@
       0% { left: var(--sx); top: var(--sy); opacity: 0; transform: translate(-50%, -50%) scale(.55) rotate(-7deg); }
       10% { opacity: 1; }
       58% { left: 50%; top: 470px; transform: translate(-50%, -50%) scale(1.02) rotate(4deg); }
-      100% { left: var(--ex); top: var(--ey); opacity: 0; transform: translate(-50%, -50%) scale(.62) rotate(0); }
+      100% { left: var(--ex); top: var(--ey); opacity: 1; transform: translate(-50%, -50%) scale(.62) rotate(0); }
+    }
+
+    @keyframes insertIntoDb {
+      0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      64% { transform: translate(-50%, 96px) scale(.78); opacity: 1; }
+      100% { transform: translate(-50%, 130px) scale(.42); opacity: 0; }
+    }
+
+    @keyframes splash {
+      0% { opacity: .9; transform: translate(-50%, -50%) scale(.25); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(1.28); }
+    }
+
+    @keyframes liquidPulse {
+      0%, 100% { filter: saturate(1); }
+      50% { filter: saturate(1.45) brightness(1.08); }
+    }
+
+    @keyframes wave {
+      from { transform: translateX(0); }
+      to { transform: translateX(-74px); }
     }
 
     @media (max-width: 760px) {
@@ -369,7 +474,7 @@
         0% { left: var(--sx); top: var(--sy); opacity: 0; transform: translate(-50%, -50%) scale(.55) rotate(-7deg); }
         10% { opacity: 1; }
         58% { left: 50%; top: 414px; transform: translate(-50%, -50%) scale(1.02) rotate(4deg); }
-        100% { left: var(--ex); top: var(--ey); opacity: 0; transform: translate(-50%, -50%) scale(.62) rotate(0); }
+        100% { left: var(--ex); top: var(--ey); opacity: 1; transform: translate(-50%, -50%) scale(.62) rotate(0); }
       }
     }
   </style>
@@ -410,8 +515,10 @@
     <section class="account-db" aria-label="Salesforce 取引先オブジェクト">
       <div class="db-top"></div>
       <div class="db-body">
+        <div class="db-liquid" id="dbLiquid" style="--level: 8%" aria-hidden="true"></div>
         <div class="db-title">Account Object</div>
         <div class="records" id="records"></div>
+        <div class="db-meter" id="dbMeter">0 records</div>
       </div>
       <div class="db-bottom"></div>
     </section>
@@ -427,6 +534,9 @@
     const recordsEl = document.getElementById('records');
     const feedEl = document.getElementById('feed');
     const statusEl = document.getElementById('status');
+    const dbLiquid = document.getElementById('dbLiquid');
+    const dbMeter = document.getElementById('dbMeter');
+    const accountDb = document.querySelector('.account-db');
 
     const users = [
       { key: 'sales', name: '営業ユーザー', op: '登録', symbol: '+', color: '#2f80ed' },
@@ -455,6 +565,7 @@
 
     const recordRows = [...document.querySelectorAll('.record')];
     let tick = 0;
+    let totalChanges = 0;
 
     function centerOf(element) {
       const stageRect = stage.getBoundingClientRect();
@@ -472,34 +583,60 @@
       const lane = document.querySelector(`[data-user="${user.key}"]`);
       const target = recordRows[accountIndex];
       const start = centerOf(lane);
-      const end = centerOf(target);
+      const dbEntry = centerOf(accountDb);
       const event = document.createElement('div');
 
-      account.count += 1;
       event.className = 'event';
       event.dataset.op = user.symbol;
       event.style.setProperty('--tone', user.color);
       event.style.setProperty('--sx', `${start.x}px`);
       event.style.setProperty('--sy', `${start.y + 54}px`);
-      event.style.setProperty('--ex', `${end.x}px`);
-      event.style.setProperty('--ey', `${end.y}px`);
+      event.style.setProperty('--ex', `${dbEntry.x}px`);
+      event.style.setProperty('--ey', `${dbEntry.y - 140}px`);
       event.innerHTML = `<div><b>${user.op}: ${account.name}</b><br><span>${user.name} → Account</span></div>`;
       stage.appendChild(event);
 
       statusEl.textContent = `${user.name} が「${account.name}」を${user.op}中...`;
 
       event.addEventListener('animationend', () => {
+        const drop = document.createElement('div');
+        drop.className = 'insert-drop';
+        drop.textContent = user.symbol;
+        drop.style.setProperty('--tone', user.color);
+        drop.style.setProperty('--drop-x', `${dbEntry.x}px`);
+        drop.style.setProperty('--drop-start-y', `${dbEntry.y - 140}px`);
+        stage.appendChild(drop);
         event.remove();
-        target.style.setProperty('--flash', user.color);
-        target.classList.add('flash');
-        target.querySelector('.counter').textContent = `${account.count} changes`;
-        window.setTimeout(() => target.classList.remove('flash'), 520);
+        statusEl.textContent = `データが取引先オブジェクトの中へ挿入されています...`;
 
-        const item = document.createElement('li');
-        item.innerHTML = `<em>${new Date().toLocaleTimeString('ja-JP')}</em> ${user.name} が ${account.name} を${user.op}`;
-        feedEl.prepend(item);
-        [...feedEl.children].slice(5).forEach((child) => child.remove());
-        statusEl.textContent = `取引先オブジェクトに ${account.count} 件目の変更を反映しました`;
+        drop.addEventListener('animationend', () => {
+          account.count += 1;
+          totalChanges += 1;
+          const level = Math.min(86, 8 + totalChanges * 8);
+          const splash = document.createElement('div');
+          splash.className = 'splash';
+          splash.style.setProperty('--splash-y', `${100 - level}%`);
+          dbLiquid.after(splash);
+          dbLiquid.style.setProperty('--level', `${level}%`);
+          dbLiquid.classList.add('pulse');
+          drop.remove();
+          window.setTimeout(() => {
+            splash.remove();
+            dbLiquid.classList.remove('pulse');
+          }, 760);
+
+          target.style.setProperty('--flash', user.color);
+          target.classList.add('flash');
+          target.querySelector('.counter').textContent = `${account.count} changes`;
+          dbMeter.textContent = `${totalChanges} records`;
+          window.setTimeout(() => target.classList.remove('flash'), 520);
+
+          const item = document.createElement('li');
+          item.innerHTML = `<em>${new Date().toLocaleTimeString('ja-JP')}</em> ${user.name} が ${account.name} を${user.op}`;
+          feedEl.prepend(item);
+          [...feedEl.children].slice(5).forEach((child) => child.remove());
+          statusEl.textContent = `水位のように件数が増えました：合計 ${totalChanges} 件`;
+        }, { once: true });
       }, { once: true });
 
       tick += 1;
@@ -511,7 +648,7 @@
     });
 
     window.addEventListener('resize', () => {
-      document.querySelectorAll('.event').forEach((event) => event.remove());
+      document.querySelectorAll('.event, .insert-drop, .splash').forEach((event) => event.remove());
     });
   </script>
 </body>
